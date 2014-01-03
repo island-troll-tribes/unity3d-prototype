@@ -38,8 +38,7 @@ public class Unit : MonoBehaviour
 			Quaternion rotation = Quaternion.LookRotation(targetPosition - transform.position);
 			float str = Mathf.Min (rotationSpeed * Time.deltaTime, 1);
 			transform.rotation = Quaternion.Lerp(transform.rotation, rotation, str);
-			
-			// Check direction angle. If greater than 60° then first turn without moving, otherwise full throttle ahead.
+
 			Vector3 targetDir = targetPosition - transform.position;
 			Vector3 move = transform.forward;
 			float angle = Vector3.Angle(targetDir, move);
@@ -48,7 +47,6 @@ public class Unit : MonoBehaviour
 			} else {
 				UnitState = MovementState.MOVE;
 			}
-			// check the distance
 			float distanceToDestination = Vector3.Distance(targetPosition, transform.position);
 			//print ("Distance to other: " + dist);
 			if (distanceToDestination < targetReachedRadius) {
@@ -75,7 +73,6 @@ public class Unit : MonoBehaviour
 		moveToTarget = true;
 		UnitState = MovementState.MOVE;
 		targetPosition = newTarget;
-		//print ("Tank moving to: " + targetPosition);
 	}
 	public void SetUnitSelected(bool selected)
 	{

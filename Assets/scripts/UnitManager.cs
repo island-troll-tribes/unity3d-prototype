@@ -44,27 +44,37 @@ public class UnitManager : MonoBehaviour
 		}
 	}
 	
-	public void SelectUnitsInArea(Vector3 StartPoint, Vector3 EndPoint)
+	public void SelectUnitsInArea(Vector3 point1, Vector3 point2)
 	{
-		if( EndPoint.x < StartPoint.x )
-			swap<float>( ref EndPoint.x, ref StartPoint.x );
-		if( EndPoint.y > StartPoint.y )
-			swap<float>( ref EndPoint.y, ref StartPoint.y );
+		if (point2.x < point1.x) {
+			// swap x positions. Selection rectangle is beeing drawn from right to left
+			var x1 = point1.x;
+			var x2 = point2.x;
+			point1.x = x2;
+			point2.x = x1;
+		}
 		
+		if (point2.z > point1.z) {
+			// swap z positions. Selection rectangle is beeing drawn from bottom to top
+			var z1 = point1.z;
+			var z2 = point2.z;
+			point1.z = z2;
+			point2.z = z1;
+		}
 		foreach( GameObject Unit in allUnitList ) {
 			Vector3 UnitPos = Unit.transform.position;
-			if( UnitPos.x > StartPoint.x && UnitPos.x < EndPoint.x && UnitPos.y < StartPoint.y && UnitPos.y > EndPoint.y ) {
+			if (UnitPos.x > point1.x && UnitPos.x < point2.x && UnitPos.z < point1.z && UnitPos.z > point2.z) {
 				selectedUnitList.Add(Unit);
 				Unit.SendMessage("SetUnitSelected", true);
 			}
 		}
 	}
-	private void swap<T>(ref T lhs, ref T rhs)
-	{
-		T temp;
-		temp = lhs;
-		lhs = rhs;
-		rhs = temp;
+	private void Test() {
+		print("UnitManager: Test!");
+	}
+	
+	private void OnApplicationQuit() {
+		instance = null;
 	}
 }
 

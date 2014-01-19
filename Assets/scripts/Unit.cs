@@ -3,15 +3,23 @@ using System.Collections;
 
 public class Unit : MonoBehaviour
 {
+	byte						team;
 	bool						moveToTarget;
 	Vector3						targetPosition;
 	private bool				isSelected;
-	private float				rotationSpeed = 6.0f;
+	private Vector3				targetDir;
+	private float				angle;
 	private float				movementSpeed = 15.0f;
 	private float				targetReachedRadius = 1.5f;
 	private MovementState 		UnitState = MovementState.STOP;
-	private GameObject 			healthBar;
-	public GameObject 			healthBarPrefab;
+	public 	float 				health = 150.0f;
+	public 	float 				maxHealth = 150.0f;
+	public  int					level = 1;
+	public  Texture2D 			backgroundTexture;
+	public 	Texture2D 			healthTexture;
+	public  bool				isHero = true;
+	public  bool 				isBuilding;
+	public  float 				xp = 0;
 	
 	enum MovementState {
 		STOP = 1,
@@ -23,25 +31,16 @@ public class Unit : MonoBehaviour
 		GameObject Unit = GameObject.Find("UnitManager");
 		Unit.SendMessage("AddUnit", gameObject);
 		
-		healthBar = Instantiate( healthBarPrefab, transform.position, Quaternion.identity ) as GameObject;
-		healthBar.transform.parent = gameObject.transform;
-		healthBar.transform.position = new Vector3(transform.position.x, transform.position.y+5, transform.position.z);
-		
 		SetUnitSelected(false);
 	}
-	
+
 	// Update is called once per frame
 	void Update ()
 	{
 		if (moveToTarget) {
-			
-			Quaternion rotation = Quaternion.LookRotation(targetPosition - transform.position);
-			float str = Mathf.Min (rotationSpeed * Time.deltaTime, 1);
-			transform.rotation = Quaternion.Lerp(transform.rotation, rotation, str);
-
-			Vector3 targetDir = targetPosition - transform.position;
-			Vector3 move = transform.forward;
-			float angle = Vector3.Angle(targetDir, move);
+			targetDir = targetPosition - transform.position;
+			transform.rotation = Quaternion.LookRotation( targetDir );
+			angle = Vector3.Angle( targetDir, transform.forward);
 			if (angle > 35.0) {
 				UnitState = MovementState.STOP;
 			} else {
@@ -77,12 +76,55 @@ public class Unit : MonoBehaviour
 	public void SetUnitSelected(bool selected)
 	{
 		isSelected = selected;
-		healthBarPrefab.GetComponent<HealthBar>().SetHealthEnabled(isSelected);
+		// healthBarPrefab.GetComponent<HealthBar>().SetHealthEnabled(isSelected);
 	}
 	public void SetSelected() {
 		print("I got selected... " + name);
 		GameObject Unit = GameObject.Find("UnitManager");
 		Unit.SendMessage("AddSelectedUnit", gameObject);
+	}
+	void OnGUI ()
+	{
+		
+		Vector2 backgroundBarSize = new Vector2 (Screen.width * 0.2f, Screen.height * 0.06f);
+		
+		Vector3 viewPos = Camera.main.WorldToScreenPoint (this.transform.position + new Vector3 (0, 3, 0));
+		
+		float valueZ = viewPos.z;
+		if (valueZ < 1) {
+			valueZ = 1;
+		} else if (valueZ > 4) {
+			valueZ = 4;
+		}
+		float valueToNormalize = Mathf.Abs (1 / (valueZ - 0.5f));
+		
+		int backgroundBarWidth = (int)(backgroundBarSize.x * valueToNormalize);
+		if (backgroundBarWidth % 2 != 0) {
+			backgroundBarWidth++;
+		}
+		float backgroundBarHeight = (int)(backgroundBarSize.y * valueToNormalize);
+		if (backgroundBarHeight % 2 != 0) {
+			backgroundBarHeight++;
+		}
+		
+		float innerBarWidth = backgroundBarWidth - 2 * 2;
+		float innerBarHeight = backgroundBarHeight - 2 * 2;
+		
+		
+		float posYHealthBar = Screen.height - viewPos.y - backgroundBarHeight;
+		
+		GUI.BeginGroup (new Rect (viewPos.x - backgroundBarWidth / 2, posYHealthBar, backgroundBarWidth, backgroundBarHeight));
+		GUI.DrawTexture (new Rect (0, 0, backgroundBarWidth, backgroundBarHeight), backgroundTexture, ScaleMode.StretchToFill);
+		
+		float healthPercent = (health / maxHealth);
+		GUI.DrawTexture (new Rect (2, 2, innerBarWidth * healthPercent, innerBarHeight), healthTexture, ScaleMode.StretchToFill);
+		
+		GUI.EndGroup ();
+		
+		if (isHero) {
+			GUI.Label(new Rect (viewPos.x - 50, posYHealthBar - 23, 100, 25), "Level "+level);
+		}
+		
 	}
 }
 

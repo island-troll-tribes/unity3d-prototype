@@ -16,8 +16,10 @@ public class UnitSelection : MonoBehaviour
 	private 		bool 			leftDrag;
 	
 	private 		float			raycastLength		= 200.0f;
-	private static 	LayerMask 		terrainLayerMask 	= 1 << 8;
-	private static 	LayerMask 		unitLayerMask 		= ~terrainLayerMask;
+	private static 	int 			terrainLayerMask 	= 1 << 8;
+	private static 	int		 		unitLayerMask 		= ~terrainLayerMask;
+
+	public			UnitManager 	unitManager;
 	
 	private 		int				ClickReleaseRange	= 20;
 	
@@ -66,9 +68,11 @@ public class UnitSelection : MonoBehaviour
 		Ray ray = Camera.main.ScreenPointToRay (leftClickDownPoint); 
 		if ( Physics.Raycast (ray, out hit, raycastLength) )
 		{ 
+			Debug.DrawLine( ray.origin, hit.point );
 			if (hit.collider.name == "Terrain")
 			{
 				rectStart = hit.point;
+				print (hit.point);
 			} 
 			else
 			{

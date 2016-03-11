@@ -1,11 +1,12 @@
 fileFormatVersion: 2
-guid: a4467789d6a3f114a8f65ee1a1fd760a
+guid: 806dcc8fed39d4f46a5ee15daddd5b77
+timeCreated: 1457676387
+licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences:
-  - backgroundTexture: {instanceID: 0}
-  - healthTexture: {instanceID: 0}
-  - Selection: {fileID: 100000, guid: cb45baa89bb17c34c82762f05261bdca, type: 2}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 

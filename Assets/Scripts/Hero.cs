@@ -38,7 +38,7 @@ public class Hero : MonoBehaviour {
 		AddHero (0);
 		// Add the heroPrefab GameObject to the parent
 		heroPrefab.transform.parent = transform;
-		transform.position = heroPrefab.transform.position;
+        heroPrefab.transform.position = transform.position;
 	}
 	void Update(){
 		CheckLevel();
